@@ -517,7 +517,7 @@
     <!-- STATIC TOP HEADER -->
     <header class="static-header">
         <div class="header-brand">
-            <img src="https://lsptop.co.id/wp-content/uploads/2019/01/logo-bnsp.png" alt="Logo BNSP" class="header-logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRHVTK3HpX1bpX2gUoCS24_b-H6koXJIDZMFpGEJhgHA&s=10" alt="Logo BNSP" class="header-logo">
             <div class="header-titles">
                 <h1>SISTEM ASESMEN KOMPETENSI BNSP</h1>
                 <p>Unit Kompetensi: Melaksanakan Asesmen (M.74SPS03.090.1</p>
@@ -2067,34 +2067,6 @@ Asesi merasa mampu mengerjaknya dan mengajukan banding</textarea>
                 checkboxes.forEach((cb, idx) => {
                     cb.checked = isBlank ? false : (idx % 8 === 0 || idx % 8 === 4 || idx % 8 === 5);
                 });
-            }
-
-            if (formPrefix === 'ak03') {
-                document.getElementById('ak03-judul').value = isBlank ? '' : 'Staf Administrasi Kantor';
-                document.getElementById('ak03-nomor').value = isBlank ? '' : 'SS-ADM-2023-01';
-                document.getElementById('ak03-tuk').value = isBlank ? 'Sewaktu/Tempat Kerja/Mandiri*(dicoret yang tidak dipilih)' : 'Sewaktu';
-                document.getElementById('ak03-asesor').value = isBlank ? '' : 'Joko Asli';
-                document.getElementById('ak03-asesi').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
-                document.getElementById('ak03-mulai').value = isBlank ? '' : '15 September 2026';
-                document.getElementById('ak03-selesai').value = isBlank ? '' : '15 September 2026';
-                document.getElementById('ak03-catatan').value = isBlank ? '' : 'Fasilitas komputer di TUK sangat baik, koneksi printer stabil dan ruang uji sangat nyaman.';
-
-                const textInputs = container.querySelectorAll('tbody input[type="text"]');
-                textInputs.forEach(input => {
-                    input.value = isBlank ? '' : input.defaultValue;
-                });
-            }
-
-            if (formPrefix === 'ak04') {
-                document.getElementById('ak04-asesi').value = '';
-                document.getElementById('ak04-asesor').value = '';
-                document.getElementById('ak04-tgl').value = '';
-                document.getElementById('ak04-skema').value = '';
-                document.getElementById('ak04-noskema').value = '';
-                document.getElementById('ak04-alasan').value = '';
-                document.getElementById('ak04-ttd-name').value = '';
-                document.getElementById('ak04-ttd-tgl').value = '';
-                container.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
             }
 
             if (formPrefix === 'ak05') {
