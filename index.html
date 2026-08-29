@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Manajemen Melaksanakan Asesmen - BNSP | Iman N Bajuasijadji</title>
+    <style>
+        :root {
+            --primary-color: #0f3d68;
+            --primary-dark: #092540;
+            --secondary-color: #f59e0b;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --bg-light: #f1f5f9;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --border-color: #cbd5e1;
+            --sidebar-width: 290px;
+            --header-height: 80px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* STATIK / FIXED HEADER */
+        header.static-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            height: 52px;
+            background: #ffffff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-titles h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+            letter-spacing: 0.3px;
+        }
+
+        .header-titles p {
+            font-size: 0.8rem;
+            color: #93c5fd;
+            font-weight: 500;
+        }
+
+        .header-dev-badge {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            text-align: right;
+        }
+
+        .header-dev-badge span {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--secondary-color);
+            font-weight: 700;
+        }
+
+        .header-dev-badge strong {
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
+        /* LAYOUT */
+        .app-container {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* SIDEBAR NAV */
+        nav.sidebar {
+            width: var(--sidebar-width);
+            background: var(--white);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: var(--header-height);
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            z-index: 900;
+            padding: 16px 0;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 12px 20px 6px 20px;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: #e0f2fe;
+            color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background-color: #e0f2fe;
+            color: var(--primary-color);
+            font-weight: 700;
+            border-left-color: var(--secondary-color);
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        /* MAIN CONTENT AREA */
+        main.content-area {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARD & UTILITIES */
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--primary-color); color: var(--white); }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { background: #e2e8f0; color: var(--text-dark); }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-warning { background: var(--secondary-color); color: #78350f; }
+        .btn-success { background: var(--accent-color); color: var(--white); }
+        .btn-danger { background: var(--danger-color); color: var(--white); }
+        .btn-print { background: #0284c7; color: var(--white); }
+        .btn-print:hover { background: #0369a1; }
+        .btn-sm { padding: 4px 10px; font-size: 0.75rem; }
+        .btn-xs { padding: 2px 6px; font-size: 0.7rem; border-radius: 4px; }
+
+        /* TOGGLE MODE TABS */
+        .mode-toggle {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-width: 420px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 8px 12px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--white);
+            color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* FORM STYLING & BNSP TABLES */
+        .form-container {
+            border: 1px solid #1e293b;
+            padding: 24px;
+            background: #ffffff;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .form-header-box {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .form-code {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #000;
+            letter-spacing: 0.5px;
+        }
+
+        .form-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #000;
+            margin-top: 4px;
+        }
+
+        .form-subtitle {
+            font-size: 0.85rem;
+            color: #334155;
+            margin-top: 4px;
+        }
+
+        table.bnsp-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.825rem;
+        }
+
+        table.bnsp-table th, 
+        table.bnsp-table td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
+
+        table.bnsp-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .table-meta td {
+            border: none;
+            padding: 4px 8px;
+        }
+
+        /* EDITABLE FORM CONTROLS */
+        .form-input {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.825rem;
+            font-family: inherit;
+            background: #ffffff;
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(15, 61, 104, 0.15);
+            background-color: #fff;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .check-box-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 14px;
+            font-size: 0.825rem;
+            cursor: pointer;
+        }
+
+        .check-box-custom input[type="checkbox"],
+        .check-box-custom input[type="radio"] {
+            cursor: pointer;
+            width: 15px;
+            height: 15px;
+            accent-color: var(--primary-color);
+        }
+
+        .signature-box {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 20px;
+        }
+
+        .signature-col {
+            flex: 1;
+            border: 1px dashed #64748b;
+            padding: 14px;
+            border-radius: 6px;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .table-action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+        }
+
+        .badge-k { background: #d1fae5; color: #065f46; }
+        .badge-bk { background: #fee2e2; color: #991b1b; }
+
+        .callout {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 12px 16px;
+            border-radius: 0 6px 6px 0;
+            margin: 14px 0;
+            font-size: 0.825rem;
+        }
+
+        .callout-title {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 4px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .info-tile {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 8px;
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .info-tile h4 {
+            color: var(--primary-color);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .info-tile p {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        footer {
+            margin-left: var(--sidebar-width);
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            padding: 16px 30px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            header.static-header, nav.sidebar, .mode-toggle, .btn-group, footer, .callout, .no-print {
+                display: none !important;
+            }
+            .app-container {
+                margin-top: 0;
+            }
+            main.content-area {
+                margin-left: 0;
+                padding: 0;
+            }
+            .card {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+            .content-section {
+                display: none !important;
+            }
+            .content-section.active {
+                display: block !important;
+            }
+            .form-container {
+                border: 2px solid #000 !important;
+                page-break-after: always;
+            }
+            .form-input {
+                border: none !important;
+                padding: 0 !important;
+                background: transparent !important;
+            }
+            textarea.form-input {
+                min-height: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STATIC TOP HEADER -->
+    <header class="static-header">
+        <div class="header-brand">
+            <img src="https://lsptop.co.id/wp-content/uploads/2019/01/logo-bnsp.png" alt="Logo BNSP" class="header-logo">
+            <div class="header-titles">
+                <h1>SISTEM ASESMEN KOMPETENSI BNSP</h1>
+                <p>Unit Kompetensi: Melaksanakan Asesmen (M.74SPS03.090.1</p>
+            </div>
+        </div>
+        <div class="header-dev-badge">
+            <span>PENGEMBANG APLIKASI</span>
+            <strong>Iman N Bajuasijadji</strong>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- SIDEBAR NAVIGATION TANPA FR IA -->
+        <nav class="sidebar">
+            <div class="nav-category">Modul & Konsep</div>
+            <a class="nav-item active" onclick="showSection('beranda')">
+                🏠 Ringkasan Unit Kompetensi
+            </a>
+            <a class="nav-item" onclick="showSection('alur-sop')">
+                🔄 Alur & SOP Melaksanakan Asesmen
+            </a>
+
+            <div class="nav-category">Formulir Asesmen (FR.AK)</div>
+            <a class="nav-item" onclick="showSection('ak01')">
+                📄 FR.AK.01 Persetujuan & Kerahasiaan
+                <span class="nav-badge">Wajib</span>
+            </a>
+            <a class="nav-item" onclick="showSection('ak02')">
+                📋 FR.AK.02 Rekaman Asesmen
+                <span class="nav-badge">Keputusan</span>
+            </a>
+            <a class="nav-item" onclick="showSection('ak03')">
+                💬 FR.AK.03 Umpan Balik Asesi
+                <span class="nav-badge">Feedback</span>
+            </a>
+            <a class="nav-item" onclick="showSection('ak04')">
+                ⚖️ FR.AK.04 Banding Asesmen
+                <span class="nav-badge">Banding</span>
+            </a>
+            <a class="nav-item" onclick="showSection('ak05')">
+                📑 FR.AK.05 Laporan Asesmen
+                <span class="nav-badge">Laporan</span>
+            </a>
+            <a class="nav-item" onclick="showSection('ak06')">
+                🔍 FR.AK.06 Meninjau Proses Asesmen
+                <span class="nav-badge">Review</span>
+            </a>
+            <a class="nav-item" onclick="showSection('ak07')">
+                ♿ FR.AK.07 Penyesuaian Beralasan
+                <span class="nav-badge">Khusus</span>
+            </a>
+
+            <div class="nav-category">Simulasi & Role Play</div>
+            <a class="nav-item" onclick="showSection('roleplay')">
+                🎭 Naskah Praktik Role Play Asesor
+            </a>
+        </nav>
+
+        <main class="content-area">
+
+            <!-- SECTION 1: BERANDA -->
+            <section id="beranda" class="content-section active">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Unit Kompetensi: Melaksanakan Asesmen</h2>
+                            <p class="text-muted">Kode Unit: M.74SPS03.090.1 | SKKNI No. 333 Tahun 2020</p>
+                        </div>
+                        <button class="btn btn-print" onclick="window.print()">🖨️ Cetak Modul Ringkas</button>
+                    </div>
+
+                    <div class="callout">
+                        <div class="callout-title">📌 Deskripsi Unit Kompetensi</div>
+                        Unit ini berhubungan dengan pengetahuan, keterampilan, dan sikap kerja yang dibutuhkan dalam melaksanakan asesmen berbasis kompetensi berdasarkan standar industri dan skema sertifikasi yang berlaku di Badan Nasional Sertifikasi Profesi (BNSP).
+                    </div>
+
+                    <h3 style="margin: 20px 0 12px 0; color: var(--primary-color);">6 (Enam) Elemen Kompetensi Inti:</h3>
+                    <div class="grid-3">
+                        <div class="info-tile">
+                            <h4>1. Menetapkan & Memelihara Lingkungan</h4>
+                            <p>Menginterpretasi rencana asesmen, mengonfirmasi kebijakan organisasi/hukum/K3, dan menjelaskan proses serta hak banding kepada asesi.</p>
+                        </div>
+                        <div class="info-tile">
+                            <h4>2. Mengumpulkan Bukti Berkualitas</h4>
+                            <p>Menerapkan metode dan perangkat asesmen sesuai panduan rencana asesmen dengan menjunjung prinsip asesmen dan aturan bukti.</p>
+                        </div>
+                        <div class="info-tile">
+                            <h4>3. Mendukung Asesi</h4>
+                            <p>Membimbing asesi, menggunakan keterampilan interpersonal dua arah, dan menerapkan penyesuaian yang wajar (*reasonable adjustment*).</p>
+                        </div>
+                        <div class="info-tile">
+                            <h4>4. Membuat Keputusan Asesmen</h4>
+                            <p>Mengevaluasi bukti terhadap standar kompetensi (5 Dimensi), memutuskan rekomendasi K (Kompeten) atau BK (Belum Kompeten).</p>
+                        </div>
+                        <div class="info-tile">
+                            <h4>5. Merekam & Melaporkan Keputusan</h4>
+                            <p>Mencatat hasil asesmen secara akurat pada FR.AK.02 & FR.AK.05, menyerahkan laporan ke LSP, dan memberi umpan balik ke asesi.</p>
+                        </div>
+                        <div class="info-tile">
+                            <h4>6. Meninjau Proses Asesmen</h4>
+                            <p>Mengevaluasi kesesuaian prinsip asesmen (VRFA) dan konsistensi dimensi kompetensi demi perbaikan mutu berkelanjutan.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-2" style="margin-top: 20px;">
+                        <div class="card" style="border-left: 4px solid var(--secondary-color);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 10px;">⚖️ 4 Prinsip Asesmen (VRFA)</h4>
+                            <ul style="padding-left: 20px; font-size: 0.85rem; line-height: 1.8;">
+                                <li><strong>Valid:</strong> Menilai apa yang seharusnya dinilai sesuai standar.</li>
+                                <li><strong>Reliabel:</strong> Konsisten jika diuji oleh asesor berbeda pada waktu berbeda.</li>
+                                <li><strong>Fleksibel:</strong> Memenuhi kebutuhan spesifik & penyesuaian konteks asesi.</li>
+                                <li><strong>Adil (Fair):</strong> Bebas dari bias, tidak diskriminatif, dan asesi memahami haknya.</li>
+                            </ul>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--accent-color);">
+                            <h4 style="color: var(--primary-color); margin-bottom: 10px;">📦 4 Aturan Bukti (VATM)</h4>
+                            <ul style="padding-left: 20px; font-size: 0.85rem; line-height: 1.8;">
+                                <li><strong>Valid:</strong> Bukti sesuai dengan kriteria unjuk kerja & aspek kritis.</li>
+                                <li><strong>Asli (Authentic):</strong> Hasil kerja murni dari asesi itu sendiri.</li>
+                                <li><strong>Terkini (Current):</strong> Menggambarkan kemampuan kerja saat ini.</li>
+                                <li><strong>Memadai (Sufficient):</strong> Cukup memenuhi 5 dimensi kompetensi & KUK.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: SOP PELAKSANAAN ASESMEN -->
+            <section id="alur-sop" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">SOP Pelaksanaan Asesmen Kompetensi</h2>
+                        <span class="badge badge-k">Standar BNSP 2023 / 2026</span>
+                    </div>
+                    <table class="bnsp-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">Tahap</th>
+                                <th style="width: 200px;">Langkah Kerja</th>
+                                <th>Aktivitas Utama Asesor</th>
+                                <th style="width: 140px;">Formulir Terkait</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold;">1</td>
+                                <td><strong>Pra-Asesmen & Menetapkan Lingkungan</strong></td>
+                                <td>
+                                    - Salam, perkenalan, safety briefing (K3).<br>
+                                    - Verifikasi data APL-01 & APL-02.<br>
+                                    - Menjelaskan rencana asesmen, metode, bukti, hak banding, dan kerahasiaan.<br>
+                                    - Menandatangani persetujuan asesmen.
+                                </td>
+                                <td>FR.AK.01<br>FR.AK.07 (jika ada)</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold;">2</td>
+                                <td><strong>Pengumpulan Bukti & Mendukung Asesi</strong></td>
+                                <td>
+                                    - Mengamati demonstrasi langsung atau verifikasi portofolio secara objektif.<br>
+                                    - Mengajukan pertanyaan klarifikasi bila diperlukan.<br>
+                                    - Memberi bimbingan tanpa membocorkan substansi jawaban.
+                                </td>
+                                <td>Metode Langsung / Tidak Langsung</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold;">3</td>
+                                <td><strong>Keputusan Asesmen & Umpan Balik</strong></td>
+                                <td>
+                                    - Membandingkan seluruh bukti dengan standar (VATM).<br>
+                                    - Menetapkan rekomendasi Kompeten (K) / Belum Kompeten (BK).<br>
+                                    - Memberikan umpan balik konstruktif dan rencana tindak lanjut.<br>
+                                    - Meminta feedback dari asesi.
+                                </td>
+                                <td>FR.AK.02<br>FR.AK.03<br>FR.AK.04 (bila banding)</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold;">4</td>
+                                <td><strong>Pelaporan & Peninjauan Asesmen</strong></td>
+                                <td>
+                                    - Menyusun laporan resmi hasil asesmen untuk LSP.<br>
+                                    - Meninjau proses asesmen terhadap prinsip VRFA dan 5 Dimensi Kompetensi.
+                                </td>
+                                <td>FR.AK.05<br>FR.AK.06</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECTION 3: FR.AK.01 -->
+            <section id="ak01" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">FR.AK.01 - Persetujuan Asesmen dan Kerahasiaan</h2>
+                            <p class="text-muted">Persetujuan Asesmen ini untuk menjamin bahwa Asesi telah diberi arahan secara rinci tentang perencanaan dan proses asesmen.</p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-print" onclick="window.print()">🖨️ Cetak Formulir</button>
+                        </div>
+                    </div>
+
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="switchMode('ak01', 'sample')">Contoh Isian Lengkap</button>
+                        <button class="mode-btn" onclick="switchMode('ak01', 'blank')">Formulir Kosongan</button>
+                    </div>
+
+                    <div class="form-container" id="ak01-form">
+                        <div class="form-header-box">
+                            <div class="form-code">FR.AK.01</div>
+                            <div class="form-title">PERSETUJUAN ASESMEN DAN KERAHASIAAN</div>
+                            <div class="form-subtitle">Persetujuan Asesmen ini untuk menjamin bahwa Asesi telah diberi arahan secara rinci tentang perencanaan dan proses asesmen</div>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Skema Sertifikasi (KKNI/Okupasi/Klaster)*</td>
+                                <td style="width: 20%;">Judul</td>
+                                <td style="width: 2%;">:</td>
+                                <td><input type="text" id="ak01-judul" class="form-input" value="Staf Administrasi Kantor"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Nomor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak01-nomor" class="form-input" value="SS-ADM-2023-01"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">TUK</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak01-tuk" class="form-input" value="Sewaktu / Tempat Kerja / Mandiri*"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak01-asesor" class="form-input" value="Joko Asli"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesi</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak01-asesi" class="form-input" value="Ahmad Fauzi, S.AP"></td>
+                            </tr>
+                        </table>
+
+                        <table class="bnsp-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Bukti yang akan dikumpulkan :</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="width: 33%;"><label class="check-box-custom"><input type="checkbox" id="ak01-b1" checked> Hasil Verifikasi Portofolio</label></td>
+                                    <td style="width: 33%;"><label class="check-box-custom"><input type="checkbox" id="ak01-b2"> Hasil Reviu Produk</label></td>
+                                    <td><label class="check-box-custom"><input type="checkbox" id="ak01-b3" checked> Hasil Observasi Langsung</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="check-box-custom"><input type="checkbox" id="ak01-b4"> Hasil Kegiatan Terstruktur</label></td>
+                                    <td><label class="check-box-custom"><input type="checkbox" id="ak01-b5" checked> Hasil Tanya Jawab</label></td>
+                                    <td><label class="check-box-custom"><input type="checkbox" id="ak01-b6" checked> Hasil Pertanyaan Lisan</label></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="check-box-custom"><input type="checkbox" id="ak01-b7" checked> Hasil Pertanyaan tulis</label></td>
+                                    <td><label class="check-box-custom"><input type="checkbox" id="ak01-b8" checked> Hasil Pertanyaan Wawancara</label></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox" id="ak01-b9"> Lainnya :</label>
+                                            <input type="text" id="ak01-b9-txt" class="form-input" style="flex: 1;" value="">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <th colspan="6">Pelaksanaan asesmen disepakati pada:</th>
+                            </tr>
+                            <tr>
+                                <td style="width: 15%; font-weight: bold;">Hari/Tanggal :</td>
+                                <td style="width: 20%;"><input type="text" id="ak01-tgl" class="form-input" value="Senin, 15 September 2026"></td>
+                                <td style="width: 10%; font-weight: bold;">Waktu :</td>
+                                <td style="width: 20%;"><input type="text" id="ak01-waktu" class="form-input" value="08.30 - 16.00 WIB"></td>
+                                <td style="width: 10%; font-weight: bold;">TUK :</td>
+                                <td><input type="text" id="ak01-tuk-detail" class="form-input" value="TUK Sewaktu LSP TOP"></td>
+                            </tr>
+                        </table>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 50%; vertical-align: top;">
+                                    <strong>Asesor :</strong><br>
+                                    <p style="text-align: justify; margin-top: 6px; font-size: 0.8rem;">
+                                        Menyatakan tidak akan membuka hasil pekerjaan yang saya peroleh karena penugasan saya sebagai Asesor dalam pekerjaan Asesmen kepada siapa pun atau organisasi apapun selain kepada pihak yang berwenang sehubungan dengan kewajiban saya sebagai Asesor yang ditugaskan oleh LSP.
+                                    </p>
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <strong>Asesi :</strong><br>
+                                    <p style="text-align: justify; margin-top: 6px; font-size: 0.8rem;">
+                                        Saya setuju mengikuti asesmen dengan pemahaman bahwa informasi yang dikumpulkan hanya digunakan untuk pengembangan profesional dan hanya dapat diakses oleh orang tertentu saja.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="signature-box">
+                            <div class="signature-col">
+                                <div>Tanda tangan Asesor :</div>
+                                <div style="margin-top: 15px;"><input type="text" id="ak01-ttd-asesor-name" class="form-input" style="text-align: center; font-weight: bold;" value="Joko Asli"></div>
+                                <div style="font-size: 0.75rem; margin-top: 4px;">Tanggal: <input type="text" id="ak01-ttd-asesor-tgl" class="form-input" style="width: 130px; display: inline-block; padding: 2px;" value="15/09/2026"></div>
+                            </div>
+                            <div class="signature-col">
+                                <div>Tanda tangan Asesi :</div>
+                                <div style="margin-top: 15px;"><input type="text" id="ak01-ttd-asesi-name" class="form-input" style="text-align: center; font-weight: bold;" value="Ahmad Fauzi, S.AP"></div>
+                                <div style="font-size: 0.75rem; margin-top: 4px;">Tanggal: <input type="text" id="ak01-ttd-asesi-tgl" class="form-input" style="width: 130px; display: inline-block; padding: 2px;" value="15/09/2026"></div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.75rem; margin-top: 8px; font-style: italic;">* Coret yang tidak perlu</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: FR.AK.02 -->
+            <section id="ak02" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">FR.AK.02 - Rekaman Asesmen Kompetensi</h2>
+                            <p class="text-muted">Beri tanda centang (√) di kolom yang sesuai untuk mencerminkan bukti yang diperoleh untuk menentukan Kompetensi Asesi.</p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm no-print" onclick="addRow('ak02-tbody', 'ak02')">➕ Tambah Unit Kompetensi</button>
+                            <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+                        </div>
+                    </div>
+
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="switchMode('ak02', 'sample')">Contoh Isian Lengkap</button>
+                        <button class="mode-btn" onclick="switchMode('ak02', 'blank')">Formulir Kosongan</button>
+                    </div>
+
+                    <div class="form-container" id="ak02-form">
+                        <div class="form-header-box">
+                            <div class="form-code">FR.AK.02</div>
+                            <div class="form-title">REKAMAN ASESMEN KOMPETENSI</div>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Skema Sertifikasi (KKNI/Okupasi/Klaster)*</td>
+                                <td style="width: 15%;">Judul</td>
+                                <td style="width: 2%;">:</td>
+                                <td colspan="3"><input type="text" id="ak02-judul" class="form-input" value="Staf Administrasi Kantor"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Nomor</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak02-nomor" class="form-input" value="SS-ADM-2023-01"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">TUK</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak02-tuk" class="form-input" value="Sewaktu/Tempat Kerja/Mandiri*"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesor</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak02-asesor" class="form-input" value="Joko Asli"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesi</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak02-asesi" class="form-input" value="Ahmad Fauzi, S.AP"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Tanggal Asesmen</td>
+                                <td>:</td>
+                                <td>Mulai : <input type="text" id="ak02-mulai" class="form-input" style="width: 140px; display: inline-block;" value="15/09/2026"></td>
+                                <td colspan="2">Selesai : <input type="text" id="ak02-selesai" class="form-input" style="width: 140px; display: inline-block;" value="15/09/2026"></td>
+                            </tr>
+                        </table>
+
+                        <div class="table-action-header">
+                            <span style="font-size: 0.8rem; font-style: italic;">Beri tanda centang (√) di kolom yang sesuai untuk mencerminkan bukti yang diperoleh.</span>
+                            <button class="btn btn-success btn-xs no-print" onclick="addRow('ak02-tbody', 'ak02')">➕ Tambah Baris Unit</button>
+                        </div>
+
+                        <table class="bnsp-table" id="ak02-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 35px;">No.</th>
+                                    <th rowspan="2">Unit Kompetensi</th>
+                                    <th colspan="8">Bukti yang Diperoleh</th>
+                                    <th rowspan="2" class="no-print" style="width: 40px;">Aksi</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 45px; font-size: 0.7rem;">Observasi Demo</th>
+                                    <th style="width: 45px; font-size: 0.7rem;">Portofolio</th>
+                                    <th style="width: 45px; font-size: 0.7rem;">Pihak Ketiga</th>
+                                    <th style="width: 45px; font-size: 0.7rem;">Wawancara</th>
+                                    <th style="width: 45px; font-size: 0.7rem;">Lisan</th>
+                                    <th style="width: 45px; font-size: 0.7rem;">Tertulis</th>
+                                    <th style="width: 45px; font-size: 0.7rem;">Proyek Kerja</th>
+                                    <th style="width: 45px; font-size: 0.7rem;">Lainnya</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ak02-tbody">
+                                <tr>
+                                    <td style="text-align: center;" class="row-num">1</td>
+                                    <td><input type="text" class="form-input" value="M.74SPS03.088.2 - Merencanakan Aktivitas dan Proses Asesmen"></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;" class="row-num">2</td>
+                                    <td><input type="text" class="form-input" value="M.74SPS03.090.1 - Melaksanakan Asesmen"></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;" class="row-num">3</td>
+                                    <td><input type="text" class="form-input" value="M.74SPS03.095.1 - Memberi Kontribusi Dalam Validitas Asesemen"></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;"><input type="checkbox"></td>
+                                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 30%; font-weight: bold;">Rekomendasi hasil asesmen</td>
+                                <td>
+                                    <label class="check-box-custom"><input type="radio" name="rekom_ak02" id="ak02-rad-k" checked> <strong>Kompeten</strong></label>
+                                    <label class="check-box-custom"><input type="radio" name="rekom_ak02" id="ak02-rad-bk"> <strong>Belum kompeten</strong></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; vertical-align: top;">
+                                    Tindak lanjut yang dibutuhkan<br>
+                                    <span style="font-size: 0.75rem; font-weight: normal; color: #475569;">(Masukkan pekerjaan tambahan dan asesmen yang diperlukan untuk mencapai kompetensi)</span>
+                                </td>
+                                <td>
+                                    <textarea id="ak02-tindaklanjut" class="form-input" placeholder="*Diisi bila belum kompeten, Contoh: Pelatihan pada unit kompetensi yang BK apabila terkait dengan akurasi atau Praktek tambahan dengan supervisi bila berkaitan dengan presisi atau Asesmen ulang , atau Menambah bukti kompetensi lainnya yang relevan, atau Bimbingan dan pendampingan dari ahli"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; vertical-align: top;">
+                                    Komentar/ Observasi oleh asesor
+                                </td>
+                                <td>
+                                    <textarea id="ak02-komentar" class="form-input" placeholder="*Diisi bila kompeten, Contoh: Asesi dapat melakukan tugas praktek 15 menit lebih cepat dari waktu yang ditentukan atau Dapat mengambil skema lainnya atau jenjang lebih tinggi atau Kata atau kalimat yang membangun atau motivasi">Asesi menunjukkan penguasaan task skill dan task management skill yang sangat baik dalam seluruh proses asesmen. Direkomendasikan untuk menerima sertifikasi kompetensi.</textarea>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 50%; vertical-align: top;">
+                                    <strong>Asesi :</strong><br><br>
+                                    Nama : <input type="text" id="ak02-ttd-asesi-name" class="form-input" style="width: 70%; display: inline-block;" value="Ahmad Fauzi, S.AP"><br><br>
+                                    Tanda tangan/ Tanggal : <input type="text" id="ak02-ttd-asesi-tgl" class="form-input" style="width: 50%; display: inline-block;" value="15/09/2026">
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <strong>Asesor :</strong><br><br>
+                                    Nama : <input type="text" id="ak02-ttd-asesor-name" class="form-input" style="width: 70%; display: inline-block;" value="Joko Asli"><br><br>
+                                    No. Reg : <input type="text" id="ak02-ttd-asesor-reg" class="form-input" style="width: 65%; display: inline-block;" value="MET.000.001234 2023"><br><br>
+                                    Tanda tangan/ Tanggal : <input type="text" id="ak02-ttd-asesor-tgl" class="form-input" style="width: 50%; display: inline-block;" value="15/09/2026">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: FR.AK.03 -->
+            <section id="ak03" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">FR.AK.03 - Umpan Balik dan Catatan Asesmen</h2>
+                            <p class="text-muted">Umpan balik dari Asesi (diisi oleh Asesi setelah pengambilan keputusan asesmen).</p>
+                        </div>
+                        <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+                    </div>
+
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="switchMode('ak03', 'sample')">Contoh Isian Lengkap</button>
+                        <button class="mode-btn" onclick="switchMode('ak03', 'blank')">Formulir Kosongan</button>
+                    </div>
+
+                    <div class="form-container" id="ak03-form">
+                        <div class="form-header-box">
+                            <div class="form-code">FR.AK.03</div>
+                            <div class="form-title">UMPAN BALIK DAN CATATAN ASESMEN</div>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Skema Sertifikasi (KKNI/Okupasi/Klaster)</td>
+                                <td style="width: 15%;">Judul</td>
+                                <td style="width: 2%;">:</td>
+                                <td colspan="3"><input type="text" id="ak03-judul" class="form-input" value="Staf Administrasi Kantor"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Nomor</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak03-nomor" class="form-input" value="SS-ADM-2023-01"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">TUK</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak03-tuk" class="form-input" value="Sewaktu/Tempat Kerja/Mandiri*(dicoret yang tidak dipilih)"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesor</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak03-asesor" class="form-input" value="Joko Asli"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesi</td>
+                                <td>:</td>
+                                <td colspan="3"><input type="text" id="ak03-asesi" class="form-input" value="Ahmad Fauzi, S.AP"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Tanggal Asesmen</td>
+                                <td>:</td>
+                                <td>Mulai : <input type="text" id="ak03-mulai" class="form-input" style="width: 140px; display: inline-block;" value="15 September 2026"></td>
+                                <td colspan="2">Selesai : <input type="text" id="ak03-selesai" class="form-input" style="width: 140px; display: inline-block;" value="15 September 2026"></td>
+                            </tr>
+                        </table>
+
+                        <p style="font-size: 0.85rem; font-weight: bold; margin: 12px 0 6px 0;">
+                            Umpan balik dari Asesi (diisi oleh Asesi setelah pengambilan keputusan):
+                        </p>
+
+                        <table class="bnsp-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 45%;">KOMPONEN</th>
+                                    <th colspan="2" style="width: 120px;">Hasil</th>
+                                    <th rowspan="2">Catatan/Komentar Asesi</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 60px;">Ya</th>
+                                    <th style="width: 60px;">Tidak</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ak03-tbody">
+                                <tr>
+                                    <td>Saya mendapatkan penjelasan yang cukup memadai mengenai proses asesmen/uji kompetensi</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q1" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q1" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Sangat jelas saat sesi pra-asesmen"></td>
+                                </tr>
+                                <tr>
+                                    <td>Saya diberikan kesempatan untuk mempelajari standar kompetensi yang akan diujikan dan menilai diri sendiri terhadap pencapaiannya</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q2" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q2" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Waktu cukup untuk verifikasi APL-02"></td>
+                                </tr>
+                                <tr>
+                                    <td>Asesor memberikan kesempatan untuk mendiskusikan/menegosiasikan metoda, instrumen dan sumber asesmen serta jadwal asesmen</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q3" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q3" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Jadwal disepakati bersama"></td>
+                                </tr>
+                                <tr>
+                                    <td>Asesor berusaha menggali seluruh bukti pendukung yang sesuai dengan latar belakang pelatihan dan pengalaman yang saya miliki</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q4" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q4" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Semua portofolio dikonfirmasi dengan baik"></td>
+                                </tr>
+                                <tr>
+                                    <td>Saya sepenuhnya diberikan kesempatan untuk mendemonstrasikan kompetensi yang saya miliki selama asesmen</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q5" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q5" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Peralatan dan waktu demonstrasi memadai"></td>
+                                </tr>
+                                <tr>
+                                    <td>Saya mendapatkan penjelasan yang memadai mengenai keputusan asesmen</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q6" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q6" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Rasional keputusan sangat logis"></td>
+                                </tr>
+                                <tr>
+                                    <td>Asesor memberikan umpan balik yang mendukung setelah asesmen serta tindak lanjutnya</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q7" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q7" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Catatan pengembangan diri sangat membangun"></td>
+                                </tr>
+                                <tr>
+                                    <td>Asesor bersama saya mempelajari semua dokumen asesmen serta menandatanganinya</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q8" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q8" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Dokumen ditandatangani lengkap"></td>
+                                </tr>
+                                <tr>
+                                    <td>Saya mendapatkan jaminan kerahasiaan hasil asesmen serta penjelasan penanganan dokumen asesmen</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q9" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q9" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Jaminan kerahasiaan tertulis pada FR.AK.01"></td>
+                                </tr>
+                                <tr>
+                                    <td>Asesor menggunakan keterampilan komunikasi yang efektif selama asesmen</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q10" value="ya" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak03_q10" value="tidak"></td>
+                                    <td><input type="text" class="form-input" value="Komunikasi ramah dan profesional"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="font-weight: bold; width: 30%; vertical-align: top;">
+                                    Catatan/komentar lainnya (apabila ada) :
+                                </td>
+                                <td>
+                                    <textarea id="ak03-catatan" class="form-input" placeholder="Contoh pengisian : Masukan untuk Panitia , TUK , fasilitas umum">Fasilitas komputer di TUK sangat baik, koneksi printer stabil dan ruang uji sangat nyaman.</textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: FR.AK.04 (KOSONGAN TOTAL DEFAULT SESUAI PERMINTAAN) -->
+            <section id="ak04" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">FR.AK.04 - Banding Asesmen</h2>
+                            <p class="text-muted">Anda mempunyai hak mengajukan banding jika Anda menilai Proses Asesmen tidak sesuai SOP dan tidak memenuhi Prinsip Asesmen.</p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary btn-sm" onclick="clearForm('ak04-form')">🧹 Kosongkan Form</button>
+                            <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+                        </div>
+                    </div>
+
+                    <div class="form-container" id="ak04-form">
+                        <div class="form-header-box">
+                            <div class="form-code">FR.AK.04</div>
+                            <div class="form-title">BANDING ASESMEN</div>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 30%; font-weight: bold;">Nama Asesi :</td>
+                                <td><input type="text" id="ak04-asesi" class="form-input" value=""></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Nama Asesor :</td>
+                                <td><input type="text" id="ak04-asesor" class="form-input" value=""></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Tanggal Asesmen :</td>
+                                <td><input type="text" id="ak04-tgl" class="form-input" value=""></td>
+                            </tr>
+                        </table>
+
+                        <p style="font-size: 0.85rem; font-weight: bold; margin: 12px 0 6px 0;">
+                            Jawablah dengan Ya atau Tidak pertanyaan-pertanyaan berikut ini :
+                        </p>
+
+                        <table class="bnsp-table">
+                            <thead>
+                                <tr>
+                                    <th>Pertanyaan</th>
+                                    <th style="width: 70px;">YA</th>
+                                    <th style="width: 70px;">TIDAK</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Apakah Proses Banding telah dijelaskan kepada Anda?</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak04_q1" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak04_q1" value="tidak"></td>
+                                </tr>
+                                <tr>
+                                    <td>Apakah Anda telah mendiskusikan Banding dengan Asesor?</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak04_q2" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak04_q2" value="tidak"></td>
+                                </tr>
+                                <tr>
+                                    <td>Apakah Anda mau melibatkan “orang lain” membantu Anda dalam Proses Banding?</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak04_q3" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak04_q3" value="tidak"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <th colspan="3">Banding ini diajukan atas Keputusan Asesmen yang dibuat terhadap Skema Sertifikasi (Kualifikasi/Klaster/Okupasi) berikut :</th>
+                            </tr>
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Skema Sertifikasi</td>
+                                <td style="width: 2%;">:</td>
+                                <td><input type="text" id="ak04-skema" class="form-input" value=""></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">No. Skema Sertifikasi</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak04-noskema" class="form-input" value=""></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; vertical-align: top;">Banding ini diajukan atas alasan sebagai berikut :</td>
+                                <td style="vertical-align: top;">:</td>
+                                <td>
+                                    <textarea id="ak04-alasan" class="form-input" placeholder="Tuliskan alasan banding secara lengkap..."></textarea>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="callout" style="font-size: 0.8rem; margin: 12px 0;">
+                            <strong>Perhatian:</strong> Anda mempunyai hak mengajukan banding jika Anda menilai Proses Asesmen tidak sesuai SOP dan tidak memenuhi Prinsip Asesmen.
+                        </div>
+
+                        <div class="signature-box">
+                            <div class="signature-col" style="margin-left: auto; max-width: 350px;">
+                                <div>Tanda tangan Asesi :</div>
+                                <div style="margin-top: 15px;"><input type="text" id="ak04-ttd-name" class="form-input" style="text-align: center; font-weight: bold;" value=""></div>
+                                <div style="font-size: 0.75rem; margin-top: 4px;">Tanggal : <input type="text" id="ak04-ttd-tgl" class="form-input" style="width: 140px; display: inline-block; padding: 2px;" value=""></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: FR.AK.05 (DYNAMIC ASESI ROWS) -->
+            <section id="ak05" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">FR.AK.05 - Laporan Asesmen</h2>
+                            <p class="text-muted">Laporan resmi keputusan asesmen yang diserahkan Asesor kepada LSP.</p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm no-print" onclick="addRow('ak05-tbody', 'ak05')">➕ Tambah Asesi</button>
+                            <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+                        </div>
+                    </div>
+
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="switchMode('ak05', 'sample')">Contoh Isian Lengkap</button>
+                        <button class="mode-btn" onclick="switchMode('ak05', 'blank')">Formulir Kosongan</button>
+                    </div>
+
+                    <div class="form-container" id="ak05-form">
+                        <div class="form-header-box">
+                            <div class="form-code">FR.AK.05</div>
+                            <div class="form-title">LAPORAN ASESMEN</div>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Skema Sertifikasi (KKNI/Okupasi/ Klaster)</td>
+                                <td style="width: 15%;">Judul</td>
+                                <td style="width: 2%;">:</td>
+                                <td><input type="text" id="ak05-judul" class="form-input" value="Staf Administrasi Kantor"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Nomor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak05-nomor" class="form-input" value="SS-ADM-2023-01"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">TUK</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak05-tuk" class="form-input" value="Sewaktu/Tempat Kerja/Mandiri*"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak05-asesor" class="form-input" value="Joko Asli"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Tanggal</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak05-tgl" class="form-input" value="15 September 2026"></td>
+                            </tr>
+                        </table>
+
+                        <div class="table-action-header">
+                            <span style="font-size: 0.8rem; font-style: italic;">Daftar Rekomendasi Hasil Asesmen Peserta :</span>
+                            <button class="btn btn-success btn-xs no-print" onclick="addRow('ak05-tbody', 'ak05')">➕ Tambah Baris Asesi</button>
+                        </div>
+
+                        <table class="bnsp-table" id="ak05-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 35px;">No.</th>
+                                    <th rowspan="2" style="width: 220px;">Nama Asesi</th>
+                                    <th colspan="2" style="width: 100px;">Rekomendasi</th>
+                                    <th rowspan="2">Keterangan**</th>
+                                    <th rowspan="2" class="no-print" style="width: 40px;">Aksi</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 50px;">K</th>
+                                    <th style="width: 50px;">BK</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ak05-tbody">
+                                <tr>
+                                    <td style="text-align: center;" class="row-num">1</td>
+                                    <td><input type="text" class="form-input" value="Ahmad Fauzi, S.AP"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak05_r1" value="k" checked></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak05_r1" value="bk"></td>
+                                    <td><input type="text" class="form-input" value="Memenuhi seluruh unit kompetensi"></td>
+                                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;" class="row-num">2</td>
+                                    <td><input type="text" class="form-input" value="Budi Santoso"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak05_r2" value="k"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak05_r2" value="bk" checked></td>
+                                    <td><input type="text" class="form-input" value="BK pada Unit N.821.000.002.01 Melakukan Pengelolaan Dokumen / Arsip"></td>
+                                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="font-size: 0.75rem; font-style: italic; color: #475569;">** tuliskan Kode dan Judul Unit Kompetensi yang dinyatakan BK bila mengases satu skema</p>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 30%; font-weight: bold; vertical-align: top;">
+                                    Aspek Negatif dan Positif dalam Asesmen
+                                </td>
+                                <td>
+                                    <textarea id="ak05-aspek" class="form-input">Aspek Negatif: ada asesi yang merasa ketakutan dan tertekan, ada beban psikologis jika hasilnya belum kompetensi.
+Aspek positif : Proses asesmen berjalan lancar</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; vertical-align: top;">
+                                    Pencatatan Penolakan Hasil Asesmen
+                                </td>
+                                <td>
+                                    <textarea id="ak05-penolakan" class="form-input">Ada penolakan:
+Asesi merasa mampu mengerjaknya dan mengajukan banding</textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; vertical-align: top;">
+                                    Saran Perbaikan : (Asesor/Personil Terkait)
+                                </td>
+                                <td>
+                                    <textarea id="ak05-saran" class="form-input">Pelihara kompetensi dengan mengikuti program penyegaran melalaui palatihan yang relevan dengan kompetensi yang dimiliknya.</textarea>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 40%; vertical-align: top;"><strong>Catatan :</strong></td>
+                                <td>
+                                    <strong>Asesor :</strong><br><br>
+                                    Nama : <input type="text" id="ak05-ttd-name" class="form-input" style="width: 60%; display: inline-block;" value="Joko Asli"><br><br>
+                                    No. Reg : <input type="text" id="ak05-ttd-reg" class="form-input" style="width: 55%; display: inline-block;" value="MET.000.001234 2023"><br><br>
+                                    Tanda tangan/ Tanggal : <input type="text" id="ak05-ttd-tgl" class="form-input" style="width: 45%; display: inline-block;" value="15 September 2026">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: FR.AK.06 -->
+            <section id="ak06" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">FR.AK.06 - Meninjau Proses Asesmen</h2>
+                            <p class="text-muted">Peninjauan dapat dilakukan oleh lead asesor atau asesor yang melaksanakan asesmen.</p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-success btn-sm no-print" onclick="addRow('ak06-tbody-dimensi', 'ak06')">➕ Tambah Unit Ditinjau</button>
+                            <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+                        </div>
+                    </div>
+
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="switchMode('ak06', 'sample')">Contoh Isian Lengkap</button>
+                        <button class="mode-btn" onclick="switchMode('ak06', 'blank')">Formulir Kosongan</button>
+                    </div>
+
+                    <div class="form-container" id="ak06-form">
+                        <div class="form-header-box">
+                            <div class="form-code">FR.AK.06</div>
+                            <div class="form-title">MENINJAU PROSES ASESMEN</div>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Skema Sertifikasi (KKNI/Okupasi/ Klaster)</td>
+                                <td style="width: 15%;">Judul</td>
+                                <td style="width: 2%;">:</td>
+                                <td><input type="text" id="ak06-judul" class="form-input" value="Staf Administrasi Kantor"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Nomor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak06-nomor" class="form-input" value="SS-ADM-2023-01"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">TUK</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak06-tuk" class="form-input" value="Sewaktu/Tempat Kerja/Mandiri*"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak06-asesor" class="form-input" value="Joko Asli"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Tanggal</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak06-tgl" class="form-input" value="15 September 2026"></td>
+                            </tr>
+                        </table>
+
+                        <div class="callout" style="font-size: 0.8rem; margin: 10px 0;">
+                            <strong>Penjelasan:</strong><br>
+                            • Peninjauan dapat dilakukan oleh lead asesor atau asesor yang melaksanakan asesmen.<br>
+                            • Peninjauan dapat dilakukan secara terpadu dalam skema sertifikasi dan /atau peserta kelompok yang homogen.<br>
+                            • Isilah pemenuhan dimensi kompetensi dengan menulis kode rekaman formulir yang membuktikan terpenuhinya dimensi kompetensi.
+                        </div>
+
+                        <table class="bnsp-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Aspek yang ditinjau</th>
+                                    <th colspan="4">Kesesuaian dengan prinsip asesmen</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 70px;">Validitas</th>
+                                    <th style="width: 70px;">Reliabel</th>
+                                    <th style="width: 70px;">Fleksibel</th>
+                                    <th style="width: 70px;">Adil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Prosedur asesmen:</strong></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                                <tr>
+                                    <td>• Rencana asesmen</td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>• Persiapan asesmen</td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>• Implementasi asesmen</td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>• Keputusan asesmen</td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="background: #94a3b8; text-align: center;">-</td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                </tr>
+                                <tr>
+                                    <td>• Umpan balik asesmen</td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                    <td style="background: #94a3b8; text-align: center;">-</td>
+                                    <td style="text-align: center;"><input type="checkbox" checked></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="font-size: 0.75rem; color: #475569; font-style: italic;">*Catatan: Keputusan dan umpan balik asesmen tidak boleh fleksibel sehingga kolom fleksibel diblok.</p>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 30%; font-weight: bold;">Rekomendasi untuk peningkatan:</td>
+                                <td><input type="text" id="ak06-rekom1" class="form-input" value="tidak ada atau kalimat peningkatan sesuai aspek yang ditinjau."></td>
+                            </tr>
+                        </table>
+
+                        <div class="table-action-header">
+                            <span style="font-size: 0.85rem; font-weight: bold;">Pemenuhan dimensi kompetensi :</span>
+                            <button class="btn btn-success btn-xs no-print" onclick="addRow('ak06-tbody-dimensi', 'ak06')">➕ Tambah Baris Dimensi</button>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Aspek yang ditinjau</th>
+                                    <th colspan="5">Pemenuhan Dimensi Kompetensi</th>
+                                    <th rowspan="2" class="no-print" style="width: 40px;">Aksi</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 17%;">Task Skills</th>
+                                    <th style="width: 17%;">Task Management Skills</th>
+                                    <th style="width: 17%;">Contingency Management Skills</th>
+                                    <th style="width: 17%;">Job Role/ Environment Skills</th>
+                                    <th style="width: 17%;">Transfer Skills</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ak06-tbody-dimensi">
+                                <tr>
+                                    <td>
+                                        <strong>Konsistensi keputusan asesmen</strong><br>
+                                        <span style="font-size: 0.75rem; color: #475569;">Bukti dari berbagai asesmen diperiksa untuk konsistensi dimensi kompetensi</span>
+                                    </td>
+                                    <td><input type="text" class="form-input" value="FR. IA 01, FR. IA 02, FR IA 03"></td>
+                                    <td><input type="text" class="form-input" value="FR. IA 01, FR. IA 02, FR IA 03"></td>
+                                    <td><input type="text" class="form-input" value="FR. IA 01, FR. IA 02, FR IA 03"></td>
+                                    <td><input type="text" class="form-input" value="FR. IA 01, FR. IA 02, FR IA 03"></td>
+                                    <td><input type="text" class="form-input" value="FR. IA 01, FR. IA 02, FR IA 03"></td>
+                                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 30%; font-weight: bold;">Rekomendasi untuk peningkatan:</td>
+                                <td><input type="text" id="ak06-rekom2" class="form-input" value="Tidak ada"></td>
+                            </tr>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 30%; vertical-align: top;">
+                                    <strong>Nama Lead Asesor/Asesor</strong><br><br>
+                                    <input type="text" id="ak06-ttd-name" class="form-input" value="Joko Asli">
+                                </td>
+                                <td style="width: 30%; vertical-align: top;">
+                                    <strong>Tanggal & Tanda Tangan</strong><br><br>
+                                    <input type="text" id="ak06-ttd-tgl" class="form-input" value="15 September 2026">
+                                </td>
+                                <td style="vertical-align: top;">
+                                    <strong>Komentar:</strong><br>
+                                    <textarea id="ak06-komentar" class="form-input">semua aspek yang ditinjau telah sesuai dengan prinsip asesmen dan pemenuhan dimensi kompetensi.</textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 9: FR.AK.07 (PERSIS 100% SESUAI DOKUMEN MODUL BNSP) -->
+            <section id="ak07" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">FR.AK.07 - Ceklis Penyesuaian yang Wajar dan Beralasan</h2>
+                            <p class="text-muted">Formulir penyesuaian asesmen (*Reasonable Adjustment*) persis sesuai modul rujukan BNSP.</p>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-secondary btn-sm" onclick="clearForm('ak07-form')">🧹 Kosongkan Form</button>
+                            <button class="btn btn-print" onclick="window.print()">🖨️ Cetak</button>
+                        </div>
+                    </div>
+
+                    <div class="mode-toggle">
+                        <button class="mode-btn active" onclick="switchMode('ak07', 'sample')">Contoh Isian Lengkap</button>
+                        <button class="mode-btn" onclick="switchMode('ak07', 'blank')">Formulir Kosongan</button>
+                    </div>
+
+                    <div class="form-container" id="ak07-form">
+                        <div class="form-header-box">
+                            <div class="form-code">FR.AK.07</div>
+                            <div class="form-title">CEKLIS PENYESUAIAN YANG WAJAR DAN BERALASAN</div>
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <td style="width: 25%; font-weight: bold;">Skema Sertifikasi (KKNI/Okupasi/ Klaster)*</td>
+                                <td style="width: 15%;">Judul</td>
+                                <td style="width: 2%;">:</td>
+                                <td><input type="text" id="ak07-judul" class="form-input" value="Staf Administrasi Kantor"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>Nomor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak07-nomor" class="form-input" value="SS-ADM-2023-01"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">TUK</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak07-tuk" class="form-input" value="Sewaktu/Tempat Kerja/Mandiri*"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesor</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak07-asesor" class="form-input" value="Joko Asli"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Nama Asesi</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak07-asesi" class="form-input" value="Ahmad Fauzi, S.AP"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="font-weight: bold;">Tanggal</td>
+                                <td>:</td>
+                                <td><input type="text" id="ak07-tgl" class="form-input" value="15 September 2026"></td>
+                            </tr>
+                        </table>
+                        <p style="font-size: 0.75rem; margin-top: 4px; font-style: italic;">*Coret yang tidak perlu</p>
+
+                        <div class="callout" style="font-size: 0.8rem; margin: 10px 0;">
+                            <strong>PANDUAN BAGI ASESOR</strong><br>
+                            • Formulir ini digunakan pada saat pelaksanaan pra asesmen, jika ada asesi yang mempunyai keterbatasan sesuai karakteristik yang dimilikinya sehinga diperlukan penyesuaian yang wajar dan beralasan dan atau ada penyesuaian rencana asesemen, jika tidak sesuai dengan acuan pembanding, potensi asesi dan konteks asesi.<br>
+                            • Coretlah pada tanda * yang tidak sesuai.<br>
+                            • Berilah tanda √ pada kotak ‘☐ ‘ pada kolom potensi asesi<br>
+                            • Berilah tanda √ Ya atau Tidak pada tanda ** sesuai pilihan, jika jawaban Ya selanjutnya pada kolom keterangan berilah tanda √ di kotak ‘☐ ‘ yang tersedia, pilihan boleh lebih dari satu.<br>
+                            • Bagian B, *** tuliskan penyesuaian jika diperlukan.
+                        </div>
+
+                        <table class="bnsp-table">
+                            <tr>
+                                <th style="width: 25%; vertical-align: top;">Potensi Asesi</th>
+                                <td>
+                                    <label class="check-box-custom" style="display: block; margin-bottom: 5px;">
+                                        <input type="checkbox" id="ak07-p1" checked> Hasil pelatihan dan / atau pendidikan, dimana Kurikulum dan fasilitas praktik mampu telusur terhadap standar kompetensi
+                                    </label>
+                                    <label class="check-box-custom" style="display: block; margin-bottom: 5px;">
+                                        <input type="checkbox" id="ak07-p2"> Hasil pelatihan dan / atau pendidikan, dimana kurikulum belum berbasis kompetensi.
+                                    </label>
+                                    <label class="check-box-custom" style="display: block; margin-bottom: 5px;">
+                                        <input type="checkbox" id="ak07-p3"> Pekerja berpengalaman, dimana berasal dari industri/tempat kerja yang dalam operasionalnya mampu telusur dengan standar kompetensi
+                                    </label>
+                                    <label class="check-box-custom" style="display: block; margin-bottom: 5px;">
+                                        <input type="checkbox" id="ak07-p4"> Pekerja berpengalaman, dimana berasal dari industri/tempat kerja yang dalam operasionalnya belum berbasis kompetensi.
+                                    </label>
+                                    <label class="check-box-custom" style="display: block;">
+                                        <input type="checkbox" id="ak07-p5"> Pelatihan / belajar mandiri atau otodidak.
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 35px;">No</th>
+                                    <th rowspan="2" style="width: 35%;">Mengidentifikasi Persyaratan Modifikasi dan Kontekstualisasi (karakteristik asesi):</th>
+                                    <th colspan="2" style="width: 100px;">Diperlukan penyesuaian)**</th>
+                                    <th rowspan="2">Keterangan</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 50px;">Ya</th>
+                                    <th style="width: 50px;">Tidak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: center;">1</td>
+                                    <td>Keterbatasan asesi terhadap persyaratan bahasa, literasi, numerasi.</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj1" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj1" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Memerlukan dukungan pembaca, penerjemah, pelayan, penulis. untuk merekam jawaban asesi.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Melakukan asesmen verbal (gunakan pertanyaan lisan/pertanyaan wawancara) dengan dilengkapi gambar diagram dan bentuk-berbentuk visual.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan hasil produksi</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan Ceklis observasi/demonstrasi.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan daftar instruksi terstruktur.</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;">2</td>
+                                    <td>Penyediaan dukungan pembaca, penerjemah, pelayan, penulis.</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj2" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj2" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan pertanyaan lisan dengan dilengkapi gambar diagram dan bentuk-bentuk visual.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan pertanyaan wawancara dengan dilengkapi gambar diagram dan bentuk-bentuk visual.</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;">3</td>
+                                    <td>Penggunaan teknologi adaptif atau peralatan khusus. (Tidak dapat menggunakan teknologi adaptif (misal: mengoperasikan komputer dan printer, peralatan digital dsb).</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj3" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj3" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Ceklis observasi/demonstrasi</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Pertanyaan lisan</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Pertanyaan tertulis.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Pertanyaan wawancara.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Daftar instruksi terstruktur.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Ceklis verifikasi portofolio.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan dukungan operator komputer.</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="…………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;">4</td>
+                                    <td>Pelaksanaan asesmen secara fleksibel karena alasan keletihan atau keperluan pengobatan.</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj4" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj4" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan juru tulis.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan kamera perekam video/atau audio.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Memperbolehkan periode waktu yang lebih panjang untuk menyelesaikan tugas pekerjaan dalam asesmen.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Melakukan tugas pekerjaan dalam asesmen dengan waktu lebih pendek.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan instruksi-instruksi spesifik pada proyek yang dapat dilakukan pada berbagai tingkatan.</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;">5</td>
+                                    <td>Penyediaan peralatan asesmen berupa braille, audio/video-tape.</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj5" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj5" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan pertanyaan lisan.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan pertanyaan wawancara.</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;">6</td>
+                                    <td>Penyesuaian tempat fisik/lingkungan asesmen</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj6" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj6" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Pertanyaan lisan.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Pertanyaan tulis.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Pertanyaan wawancara.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Ceklis Verifikasi portofolio.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Ceklis reviu produk.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Daftar instruksi terstruktur.</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;">7</td>
+                                    <td>Pertimbangan umur/usia lanjut/gender asesi. (Adanya perbedaan usia dengan asesor yang lebih muda).</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj7" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj7" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan studi kasus/ Daftar instruksi terstruktur.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan instrumen asesmen dengan huruf normal jangan terlalu kecil.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan asesor dengan jenis kelamin yang sama dengan asesi.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan instrumen asesmen yang sama walaupun berbeda jenis kelamin (tidak boleh memberi tanda tambahan pada instrumen asesmen yang digunakan dengan tujuan untuk membedakan jenis kelamin).</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center;">8</td>
+                                    <td>Pertimbangan budaya/tradisi/ agama.</td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj8" value="ya"></td>
+                                    <td style="text-align: center;"><input type="radio" name="ak07_adj8" value="tidak" checked></td>
+                                    <td>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan studi kasus/daftar instruksi terstruktur</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan asesor tanpa pertimbangan budaya/tradisi/agama.</label>
+                                        <label class="check-box-custom" style="display: block; margin-bottom: 3px;"><input type="checkbox"> Menggunakan instrumen asesmen yang sama walaupun berbeda budaya/tradisi/agama).</label>
+                                        <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+                                            <label class="check-box-custom" style="margin-right: 0;"><input type="checkbox"></label>
+                                            <input type="text" class="form-input" style="flex: 1; padding: 2px 6px;" placeholder="………………………">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bnsp-table" style="margin-top: 15px;">
+                            <tr>
+                                <td style="width: 40%; font-weight: bold; vertical-align: top;">
+                                    Hasil Penyesuaian yang wajar dan beralasan disepakati menggunakan :
+                                </td>
+                                <td>
+                                    Acuan Pembanding Asesmen: <input type="text" id="ak07-acuan" class="form-input" style="margin-bottom: 6px;" value="( tuliskan nama acuan pembanding )"><br>
+                                    Metode Asesmen: <input type="text" id="ak07-metode" class="form-input" style="margin-bottom: 6px;" value="Kegiatan Terstruktur"><br>
+                                    Instrumen Asesmen: <input type="text" id="ak07-instrumen" class="form-input" value="FR.IA.04.A dan FR.IA.04.B">
+                                </td>
+                            </tr>
+                        </table>
+                        <p style="font-size: 0.75rem; font-style: italic; color: #475569;">Jika tidak ada penyesuaian yang wajar dan beralasan maka pernyataan nomor 1,2,3 tidak di isi.</p>
+
+                        <div class="signature-box">
+                            <div class="signature-col">
+                                <div>Nama Asesor : <input type="text" id="ak07-ttd-asesor-name" class="form-input" style="display: inline-block; width: 60%; margin-left: 6px;" value="Joko Asli"></div>
+                                <div style="margin-top: 15px; font-size: 0.8rem;">Tanggal dan Tanda Tangan Asesor :</div>
+                                <div style="margin-top: 5px;"><input type="text" id="ak07-ttd-asesor-tgl" class="form-input" style="text-align: center; width: 60%; display: inline-block;" value="15/09/2026"></div>
+                            </div>
+                            <div class="signature-col">
+                                <div>Nama Asesi : <input type="text" id="ak07-ttd-asesi-name" class="form-input" style="display: inline-block; width: 60%; margin-left: 6px;" value="Ahmad Fauzi, S.AP"></div>
+                                <div style="margin-top: 15px; font-size: 0.8rem;">Tanggal dan Tanda Tangan Asesi :</div>
+                                <div style="margin-top: 5px;"><input type="text" id="ak07-ttd-asesi-tgl" class="form-input" style="text-align: center; width: 60%; display: inline-block;" value="15/09/2026"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 10: ROLE PLAY ASESOR -->
+            <section id="roleplay" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Naskah Panduan Praktik Asesor (Role Play Dialogue)</h2>
+                            <p class="text-muted">Panduan percakapan saat melaksanakan asesmen.</p>
+                        </div>
+                        <button class="btn btn-print" onclick="window.print()">🖨️ Cetak Naskah</button>
+                    </div>
+
+                    <div class="callout">
+                        <strong>Kunci Sukses Asesor:</strong> Bersikap ramah, empati, tidak mengintimidasi, tegas terhadap standar, dan menjaga prinsip kerahasiaan data asesi.
+                    </div>
+
+                    <div style="font-size: 0.875rem; line-height: 1.7;">
+                        <h4 style="color: var(--primary-color); margin-top: 15px;">Fase 1: Konsultasi Pra-Asesmen (Menetapkan Lingkungan Asesmen)</h4>
+                        <p><strong>Asesor (Joko Asli):</strong> "Selamat pagi Bapak/Ibu Asesi. Perkenalkan nama saya Joko Asli, asesor kompetensi yang ditugaskan oleh LSP untuk memfasilitasi kegiatan asesmen Anda pada hari ini. Sebelum kita mulai, mari kita pastikan ruangan ini aman, jalur evakuasi terlihat jelas di sebelah kanan, dan APD telah terpasang sesuai standar K3."</p>
+                        <p><strong>Asesor:</strong> "Tujuan asesmen hari ini adalah untuk mengukur pencapaian kompetensi Bapak/Ibu pada Skema Staf Administrasi Kantor berdasarkan bukti yang valid, asli, terkini, dan memadai (VATM). Hasil rekomendasi nanti hanya ada dua: Kompeten (K) atau Belum Kompeten (BK). Jika Bapak/Ibu merasa ada ketidaksesuaian penilaian, Bapak/Ibu berhak mengajukan banding (FR.AK.04)."</p>
+                        <p><strong>Asesor:</strong> "Apakah Bapak/Ibu memiliki kebutuhan penyesuaian khusus hari ini? Jika tidak ada, mari kita tandatangani Formulir Persetujuan dan Kerahasiaan FR.AK.01 ini."</p>
+
+                        <h4 style="color: var(--primary-color); margin-top: 20px;">Fase 2: Pelaksanaan Pengumpulan Bukti</h4>
+                        <p><strong>Asesor:</strong> "Silakan pelajari tugas praktik ini. Anda memiliki waktu yang telah ditentukan untuk menyelesaikan tugas. Kerjakan dengan tenang sesuai urutan SOP. Saya akan mengamati jalannya demonstrasi tanpa mengganggu konsentrasi Anda."</p>
+
+                        <h4 style="color: var(--primary-color); margin-top: 20px;">Fase 3: Pengambilan Keputusan & Umpan Balik</h4>
+                        <p><strong>Asesor:</strong> "Terima kasih telah menyelesaikan seluruh rangkaian uji. Berdasarkan evaluasi terhadap bukti unjuk kerja dan portofolio Anda, seluruh kriteria unjuk kerja dan 5 dimensi kompetensi telah terpenuhi dengan baik. Maka saya merekomendasikan Bapak/Ibu dinyatakan <strong>KOMPETEN (K)</strong>."</p>
+                        <p><strong>Asesor:</strong> "Mohon bantuannya untuk mengisi Formulir Umpan Balik FR.AK.03 demi peningkatan mutu layanan kami. Selamat atas pencapaian Anda!"</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div>
+            © 2026 <strong>Badan Nasional Sertifikasi Profesi (BNSP)</strong> - Sistem Asesmen Berbasis Kompetensi
+        </div>
+        <div>
+            Dikembangkan oleh: <strong>Iman N Bajuasijadji</strong> | Versi Rujukan RCC 2023 - 2026
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPT WITH DYNAMIC ADD/DELETE ROW -->
+    <script>
+        // NAVIGATION HANDLER
+        function showSection(sectionId) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            if (event && event.currentTarget && event.currentTarget.classList) {
+                event.currentTarget.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // CLEAR FORM UTILITY
+        function clearForm(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.querySelectorAll('input[type="text"], textarea').forEach(input => input.value = '');
+            container.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(input => input.checked = false);
+        }
+
+        // DYNAMIC ROW ADDITION
+        function addRow(tbodyId, templateType) {
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+
+            const rowCount = tbody.querySelectorAll('tr').length + 1;
+            const newRow = document.createElement('tr');
+
+            if (templateType === 'ak02') {
+                newRow.innerHTML = `
+                    <td style="text-align: center;" class="row-num">${rowCount}</td>
+                    <td><input type="text" class="form-input" value="Kode & Judul Unit Kompetensi Baru..."></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;"><input type="checkbox"></td>
+                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                `;
+            } else if (templateType === 'ak05') {
+                const radioName = 'ak05_r' + Date.now();
+                newRow.innerHTML = `
+                    <td style="text-align: center;" class="row-num">${rowCount}</td>
+                    <td><input type="text" class="form-input" placeholder="Nama Asesi Baru..."></td>
+                    <td style="text-align: center;"><input type="radio" name="${radioName}" value="k"></td>
+                    <td style="text-align: center;"><input type="radio" name="${radioName}" value="bk"></td>
+                    <td><input type="text" class="form-input" placeholder="Keterangan unit BK..."></td>
+                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                `;
+            } else if (templateType === 'ak06') {
+                newRow.innerHTML = `
+                    <td>
+                        <strong>Konsistensi Unit Kompetensi:</strong><br>
+                        <input type="text" class="form-input" placeholder="Nama Unit...">
+                    </td>
+                    <td><input type="text" class="form-input" placeholder="Bukti TS..."></td>
+                    <td><input type="text" class="form-input" placeholder="Bukti TMS..."></td>
+                    <td><input type="text" class="form-input" placeholder="Bukti CMS..."></td>
+                    <td><input type="text" class="form-input" placeholder="Bukti JRES..."></td>
+                    <td><input type="text" class="form-input" placeholder="Bukti TRS..."></td>
+                    <td style="text-align: center;" class="no-print"><button class="btn btn-danger btn-xs" onclick="deleteRow(this)">🗑️</button></td>
+                `;
+            }
+
+            tbody.appendChild(newRow);
+            reindexRows(tbody);
+        }
+
+        // DELETE ROW
+        function deleteRow(btn) {
+            const row = btn.closest('tr');
+            const tbody = row.closest('tbody');
+            row.remove();
+            reindexRows(tbody);
+        }
+
+        // REINDEX NUMBERING
+        function reindexRows(tbody) {
+            if (!tbody) return;
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach((r, idx) => {
+                const numCell = r.querySelector('.row-num');
+                if (numCell) numCell.textContent = (idx + 1);
+            });
+        }
+
+        // MODE TOGGLE (BLANK VS SAMPLE)
+        function switchMode(formPrefix, mode) {
+            const container = document.getElementById(formPrefix + '-form');
+            if (!container) return;
+
+            const modeBtns = container.parentElement.querySelectorAll('.mode-btn');
+            modeBtns.forEach(btn => btn.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+
+            const isBlank = (mode === 'blank');
+
+            if (formPrefix === 'ak01') {
+                document.getElementById('ak01-judul').value = isBlank ? '' : 'Staf Administrasi Kantor';
+                document.getElementById('ak01-nomor').value = isBlank ? '' : 'SS-ADM-2023-01';
+                document.getElementById('ak01-tuk').value = isBlank ? 'Sewaktu / Tempat Kerja / Mandiri*' : 'Sewaktu / TUK LSP TOP Management';
+                document.getElementById('ak01-asesor').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak01-asesi').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
+                document.getElementById('ak01-tgl').value = isBlank ? '' : 'Senin, 15 September 2026';
+                document.getElementById('ak01-waktu').value = isBlank ? '' : '08.30 - 16.00 WIB';
+                document.getElementById('ak01-tuk-detail').value = isBlank ? '' : 'TUK Sewaktu LSP TOP';
+                document.getElementById('ak01-ttd-asesor-name').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak01-ttd-asesi-name').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
+                document.getElementById('ak01-ttd-asesor-tgl').value = isBlank ? '' : '15/09/2026';
+                document.getElementById('ak01-ttd-asesi-tgl').value = isBlank ? '' : '15/09/2026';
+
+                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach((cb, idx) => {
+                    cb.checked = isBlank ? false : [0, 2, 4, 5, 6, 7].includes(idx);
+                });
+            }
+
+            if (formPrefix === 'ak02') {
+                document.getElementById('ak02-judul').value = isBlank ? '' : 'Staf Administrasi Kantor';
+                document.getElementById('ak02-nomor').value = isBlank ? '' : 'SS-ADM-2023-01';
+                document.getElementById('ak02-tuk').value = isBlank ? 'Sewaktu/Tempat Kerja/Mandiri*' : 'Sewaktu';
+                document.getElementById('ak02-asesor').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak02-asesi').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
+                document.getElementById('ak02-mulai').value = isBlank ? '' : '15/09/2026';
+                document.getElementById('ak02-selesai').value = isBlank ? '' : '15/09/2026';
+                document.getElementById('ak02-rad-k').checked = !isBlank;
+                document.getElementById('ak02-rad-bk').checked = false;
+                document.getElementById('ak02-tindaklanjut').value = isBlank ? '' : '';
+                document.getElementById('ak02-komentar').value = isBlank ? '' : 'Asesi menunjukkan penguasaan task skill dan task management skill yang sangat baik dalam seluruh proses asesmen. Direkomendasikan untuk menerima sertifikasi kompetensi.';
+                document.getElementById('ak02-ttd-asesi-name').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
+                document.getElementById('ak02-ttd-asesor-name').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak02-ttd-asesi-tgl').value = isBlank ? '' : '15/09/2026';
+                document.getElementById('ak02-ttd-asesor-tgl').value = isBlank ? '' : '15/09/2026';
+                document.getElementById('ak02-ttd-asesor-reg').value = isBlank ? '' : 'MET.000.001234 2023';
+
+                const checkboxes = container.querySelectorAll('tbody input[type="checkbox"]');
+                checkboxes.forEach((cb, idx) => {
+                    cb.checked = isBlank ? false : (idx % 8 === 0 || idx % 8 === 4 || idx % 8 === 5);
+                });
+            }
+
+            if (formPrefix === 'ak03') {
+                document.getElementById('ak03-judul').value = isBlank ? '' : 'Staf Administrasi Kantor';
+                document.getElementById('ak03-nomor').value = isBlank ? '' : 'SS-ADM-2023-01';
+                document.getElementById('ak03-tuk').value = isBlank ? 'Sewaktu/Tempat Kerja/Mandiri*(dicoret yang tidak dipilih)' : 'Sewaktu';
+                document.getElementById('ak03-asesor').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak03-asesi').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
+                document.getElementById('ak03-mulai').value = isBlank ? '' : '15 September 2026';
+                document.getElementById('ak03-selesai').value = isBlank ? '' : '15 September 2026';
+                document.getElementById('ak03-catatan').value = isBlank ? '' : 'Fasilitas komputer di TUK sangat baik, koneksi printer stabil dan ruang uji sangat nyaman.';
+
+                const textInputs = container.querySelectorAll('tbody input[type="text"]');
+                textInputs.forEach(input => {
+                    input.value = isBlank ? '' : input.defaultValue;
+                });
+            }
+
+            if (formPrefix === 'ak04') {
+                document.getElementById('ak04-asesi').value = '';
+                document.getElementById('ak04-asesor').value = '';
+                document.getElementById('ak04-tgl').value = '';
+                document.getElementById('ak04-skema').value = '';
+                document.getElementById('ak04-noskema').value = '';
+                document.getElementById('ak04-alasan').value = '';
+                document.getElementById('ak04-ttd-name').value = '';
+                document.getElementById('ak04-ttd-tgl').value = '';
+                container.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            }
+
+            if (formPrefix === 'ak05') {
+                document.getElementById('ak05-judul').value = isBlank ? '' : 'Staf Administrasi Kantor';
+                document.getElementById('ak05-nomor').value = isBlank ? '' : 'SS-ADM-2023-01';
+                document.getElementById('ak05-tuk').value = isBlank ? 'Sewaktu/Tempat Kerja/Mandiri*' : 'Sewaktu';
+                document.getElementById('ak05-asesor').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak05-tgl').value = isBlank ? '' : '15 September 2026';
+                document.getElementById('ak05-aspek').value = isBlank ? '' : 'Aspek Negatif: ada asesi yang merasa ketakutan dan tertekan, ada beban psikologis jika hasilnya belum kompetensi.\nAspek positif : Proses asesmen berjalan lancar';
+                document.getElementById('ak05-penolakan').value = isBlank ? '' : 'Ada penolakan:\nAsesi merasa mampu mengerjaknya dan mengajukan banding';
+                document.getElementById('ak05-saran').value = isBlank ? '' : 'Pelihara kompetensi dengan mengikuti program penyegaran melalaui palatihan yang relevan dengan kompetensi yang dimiliknya.';
+                document.getElementById('ak05-ttd-name').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak05-ttd-reg').value = isBlank ? '' : 'MET.000.001234 2023';
+                document.getElementById('ak05-ttd-tgl').value = isBlank ? '' : '15 September 2026';
+            }
+
+            if (formPrefix === 'ak06') {
+                document.getElementById('ak06-judul').value = isBlank ? '' : 'Staf Administrasi Kantor';
+                document.getElementById('ak06-nomor').value = isBlank ? '' : 'SS-ADM-2023-01';
+                document.getElementById('ak06-tuk').value = isBlank ? 'Sewaktu/Tempat Kerja/Mandiri*' : 'Sewaktu';
+                document.getElementById('ak06-asesor').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak06-tgl').value = isBlank ? '' : '15 September 2026';
+                document.getElementById('ak06-rekom1').value = isBlank ? '' : 'tidak ada atau kalimat peningkatan sesuai aspek yang ditinjau.';
+                document.getElementById('ak06-rekom2').value = isBlank ? '' : 'Tidak ada';
+                document.getElementById('ak06-ttd-name').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak06-ttd-tgl').value = isBlank ? '' : '15 September 2026';
+                document.getElementById('ak06-komentar').value = isBlank ? '' : 'semua aspek yang ditinjau telah sesuai dengan prinsip asesmen dan pemenuhan dimensi kompetensi.';
+            }
+
+            if (formPrefix === 'ak07') {
+                document.getElementById('ak07-judul').value = isBlank ? '' : 'Staf Administrasi Kantor';
+                document.getElementById('ak07-nomor').value = isBlank ? '' : 'SS-ADM-2023-01';
+                document.getElementById('ak07-tuk').value = isBlank ? 'Sewaktu/Tempat Kerja/Mandiri*' : 'Sewaktu';
+                document.getElementById('ak07-asesor').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak07-asesi').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
+                document.getElementById('ak07-tgl').value = isBlank ? '' : '15 September 2026';
+                document.getElementById('ak07-p1').checked = !isBlank;
+                document.getElementById('ak07-p2').checked = false;
+                document.getElementById('ak07-p3').checked = false;
+                document.getElementById('ak07-p4').checked = false;
+                document.getElementById('ak07-p5').checked = false;
+                document.getElementById('ak07-acuan').value = isBlank ? '' : '( tuliskan nama acuan pembanding )';
+                document.getElementById('ak07-metode').value = isBlank ? '' : 'Kegiatan Terstruktur';
+                document.getElementById('ak07-instrumen').value = isBlank ? '' : 'FR.IA.04.A dan FR.IA.04.B';
+                document.getElementById('ak07-ttd-asesor-name').value = isBlank ? '' : 'Joko Asli';
+                document.getElementById('ak07-ttd-asesi-name').value = isBlank ? '' : 'Ahmad Fauzi, S.AP';
+                document.getElementById('ak07-ttd-asesor-tgl').value = isBlank ? '' : '15/09/2026';
+                document.getElementById('ak07-ttd-asesi-tgl').value = isBlank ? '' : '15/09/2026';
+
+                const checkboxes = container.querySelectorAll('table:nth-of-type(3) input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+        }
+    </script>
+</body>
+</html>
